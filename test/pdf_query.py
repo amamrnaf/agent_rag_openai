@@ -14,7 +14,7 @@ def initialize_index():
     """Initialize or load the index."""
     PERSIST_DIR = "./storageDAG"
     if not os.path.exists(PERSIST_DIR):
-        documents = SimpleDirectoryReader("/content").load_data()
+        documents = SimpleDirectoryReader("./content").load_data()
         Settings.context_window = 4096
         Settings.num_output = 256
         llm =  OpenAI(
