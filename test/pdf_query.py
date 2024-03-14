@@ -81,7 +81,7 @@ query_pipeline = initialize_query_pipeline()
 
 def process_question(user_question: str) -> str:
     """Process a user question and return the response."""
-    context_str = "The document delineates regulations concerning organic chemical products for customs purposes in Morocco, detailing inclusion criteria, exclusions, and classification guidelines for various derivatives."
+    context_str = "The document delineates regulations concerning chapter 29 for HS codificationsthat starts with 29."
     response = query_pipeline.run(query_str=user_question, context_str=context_str)
     return response
 
@@ -91,4 +91,4 @@ def process_question(user_question: str) -> str:
 # print(response)
 
 
-Pdf_tool = FunctionTool.from_defaults(process_question)
+Pdf_tool = FunctionTool.from_defaults(fn=process_question,description= "The document delineates regulations concerning chapter 29 for HS codificationsthat starts with 29.")

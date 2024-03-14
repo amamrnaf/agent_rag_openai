@@ -23,16 +23,46 @@ from llama_index.core.query_pipeline import (
 # set Logging to DEBUG for more detailed outputs
 table_node_mapping = SQLTableNodeMapping(sql_database)
 table_schema_objs = [
-    (SQLTableSchema(table_name="codification",context_str="This table stores information about douane position tarifaire with their respective codes, names, and categories. Each entry represents a unique code associated with a specific douane position, providing details about the corresponding name and category.")),
-    (SQLTableSchema(table_name="importers",context_str="This table contains information about importers, including their names and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique importer, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="exporters",context_str = "This table stores information about exporters, including their names and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique exporter, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="document_required",context_str = "This table contains information about required documents, including document numbers, names, libelle d'extrait, issuers, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique document requirement, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="import_duty",context_str = "This table records information about import duties, including Duty Import (DI), Taxe Provisoire d'Importation (TPI), Taxe sur la Valeur Ajoutée (TVA), and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique set of import duty details, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="annual_import",context_str = "This table contains information about annual imports, including the year, weight in kg, value in dh, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique set of import data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="annual_export",context_str = "This table contains information about annual exports, including the year, weight in kg, value in dh, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique set of export data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="clients",context_str = "This table stores information about clients, including the country, value in dh, weight in kg, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique client record, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="fournisseurs",context_str = "This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique supplier record, linked to a specific codification entry through the 'codification_id' foreign key.")),
-    (SQLTableSchema(table_name="importers",context_str = "This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage, and the corresponding douane position tarifaire codes they are associated with. Each entry represents a unique record for an accord or convention, linked to a specific codification entry through the 'codification_id' foreign key.")),
+(SQLTableSchema(
+        table_name="codification",
+        context_str="This table stores information about douane position tarifaire with their respective codes, names, and categories. Each entry represents a unique code associated with a specific douane position, providing details about the corresponding name and category."
+)),
+(SQLTableSchema(
+        table_name="importers",
+        context_str="This table contains information about importers, including their names, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique importer, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="exporters",
+    context_str="This table stores information about exporters, including their names, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique exporter, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="document_required",
+    context_str="This table contains information about required documents, including document numbers, names, libelle d'extrait, issuers, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique document requirement, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="import_duty",
+    context_str="This table records information about import duties, including Duty Import (DI), Taxe Provisoire d'Importation (TPI), Taxe sur la Valeur Ajoutée (TVA), the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique set of import duty details, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="annual_import",
+    context_str="This table contains information about annual imports, including the year, weight in kg, value in dh, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique set of import data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="annual_export",
+    context_str="This table contains information about annual exports, including the year, weight in kg, value in dh, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique set of export data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="clients",
+    context_str="This table stores information about clients, including the country, value in dh, weight in kg, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique client record, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="fournisseurs",
+    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique supplier record, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
+(SQLTableSchema(
+    table_name="accord_convention",
+    context_str="This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage, the corresponding douane position tarifaire codes ('code'), and the unique codification entry they are associated with. Each entry represents a unique record for an accord or convention, linked to a specific codification entry through the 'codification_id' foreign key."
+)),
 ]  # add a SQLTableSchema for each table
 
 obj_index = ObjectIndex.from_objects(
@@ -84,7 +114,7 @@ sql_parser_component = FnComponent(fn=parse_response_to_sql)
 
 text2sql_prompt_template = """Given an input question, first create a syntactically correct {dialect} query to run. Then, examine the results of the query and return the answer. Order the results by a relevant column to provide the most interesting examples from the database.
 
-Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns.
+Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns .
 
 Follow the format below, with each element on a separate line:
 
@@ -105,7 +135,7 @@ text2sql_prompt = templatee.partial_format(
     dialect=engine.dialect.name
 )
 response_synthesis_prompt_str = (
-    "Given an input question, synthesize a response from the query results.\n"
+    "Given an input question, synthesize a response from the query results without any limitations. Ensure that the full set of relevant information is included in your answer.\n"
     "Query: {query_str}\n"
     "SQL: {sql_query}\n"
     "SQL Response: {context_str}\n"

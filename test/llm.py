@@ -5,8 +5,22 @@ from llama_index.llms.anthropic import Anthropic
 from llama_index.core import Settings
 import os
 import openai
+from langchain.embeddings.huggingface import HuggingFaceBgeEmbeddings
+from llama_index.core import Settings
+# import logging
+# import sys
 
-os.environ["OPENAI_API_KEY"] = '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'
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+
+
+# from IPython.display import Markdown, display
+
+
+# Settings.embed_model = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-base-en-v1.5")
+
+os.environ['COHERE_API_KEY'] = 'tz56cKLq6j4PdFKXEW9K9XGOF4spOnCHHENAaY8W'
+os.environ["OPENAI_API_KEY"] = "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"
 os.environ["ANTHROPIC_API_KEY"] = "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"
 os.environ["LANGCHAIN_API_KEY"] = 'ls__8d4ee31314974e8eb9d2c2247f1af642'
 os.environ['LANGCHAIN_TRACING_V2'] = 'true'
@@ -19,6 +33,6 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 # llm = Anthropic(model="claude-3-opus-20240229")
 
-# llm = OpenAI(temperature=0.1,model="gpt-3.5-turbo")
+llm = OpenAI(temperature=0.1,model="gpt-4")
 
-llm = Ollama(model="llama2", request_timeout=30.0)
+# llm = Ollama(model="llama2:70b", request_timeout=1000.0)
