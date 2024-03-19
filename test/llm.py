@@ -25,13 +25,13 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 # tokenizer = Anthropic().tokenizer
 # Settings.tokenizer = tokenizer
 
-# llm = Replicate(
-#     model="mistralai/mixtral-8x7b-instruct-v0.1",
-#     max_tokens=1024,
-# )
+llm = Replicate(
+    model="meta/llama-2-70b-chat",
+    max_tokens=1024,
+)
 
 # llm = Anthropic(model="claude-3-opus-20240229")
 
-llm = OpenAI(temperature=0.1,model="gpt-4")
+# llm = OpenAI(temperature=0.1,model="gpt-4")
 
 # llm = Ollama(model="llama2:70b", request_timeout=1000.0)
