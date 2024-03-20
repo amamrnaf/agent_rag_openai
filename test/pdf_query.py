@@ -91,4 +91,4 @@ def process_question(user_question: str) -> str:
 # print(response)
 
 
-Pdf_tool = FunctionTool.from_defaults(fn=process_question,description= "The document delineates regulations concerning chapter 29 for HS codificationsthat starts with 29.")
+Pdf_tool = FunctionTool.from_defaults(fn=process_question,description= "Useful for searching for regulations concerning chapters 27(COMBUSTIBLES MINERAUX, HUILES MINERALES ET PRODUITS DE LEUR DISTILLATION; MATIERES BITUMINEUSES; CIRES MINERALES),28(PRODUITS DES INDUSTRIES CHIMIQUES OU DES INDUSTRIES CONNEXES),29(PRODUITS CHIMIQUES ORGANIQUES).")
