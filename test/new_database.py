@@ -341,7 +341,7 @@ with engine.connect() as connection:
         #     query = text("INSERT INTO import_duty_info (DI, TPI, TVA, code, designation, category) VALUES (:DI, :TPI, :TVA, :code, :designation, :category)")
         #     connection.execute(query, {"DI": row[0],"TPI": row[1],"TVA": row[2],"code": row[3],"designation": row[4],"category": row[5]})
         # # Commit the transaction
-        # trans.commit()
+        trans.commit()
     
     except Exception as e:
         # Rollback the transaction in case of error
