@@ -88,4 +88,3 @@ def process_questionTIC(user_question: str) -> str:
     response = query_pipeline.run(query_str=user_question, context_str=context_str)
     return response
 
-TIC_tool = FunctionTool.from_defaults(fn=process_questionTIC,description= "The document details moroccan domestic consumption tax (taxe intérieure de consommation TIC).")

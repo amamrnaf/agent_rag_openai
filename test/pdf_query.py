@@ -90,5 +90,3 @@ def process_question(user_question: str) -> str:
     context_str = "These documents detail the classification and specifications of diverse products, encompassing a range of items from chemicals to industrial goods, for tariff and regulatory purposes."
     response = query_pipeline.run(query_str=user_question, context_str=context_str)
     return response
-
-Pdf_tool = FunctionTool.from_defaults(fn=process_question,description= "A comprehensive set of documents outlining the classification and specifications of various products, including chemicals and industrial goods, for the purpose of tariffs and regulations.")
