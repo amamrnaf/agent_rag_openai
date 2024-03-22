@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from sql_query import qp
+from sql_query import NL_2_SQL_fn
 from llm import llm
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
@@ -10,18 +10,13 @@ from TIC_query import TIC_tool
 # from pdf_query import Pdf_tool
 app = Flask(__name__)
 
-def query_decomp_fn(question):
-    questions = generate_queries_decomposition.invoke({"question":question})
-    return questions
 
-def NL_2_SQL_fn(input):
-    response = qp.run(query=input)
-    return response
-query_decomposition_tool = FunctionTool.from_defaults(fn=query_decomp_fn, description="A valuable tool for breaking down the input question into sub-questions. Consider using this tool as a preliminary step before employing other tools to enhance the quality and variety of results.")
+
+
 NL_2_SQL_tool = FunctionTool.from_defaults(fn=NL_2_SQL_fn, description="useful for querying the customs database with natural language,you can decompose what you wanna learn from the database and ask a question at a time.DO NOT use a sql command")
 
 
-agent = ReActAgent.from_tools([NL_2_SQL_tool,query_decomposition_tool,Pdf_tool,TIC_tool], llm=llm, verbose=True)
+agent = ReActAgent.from_tools([NL_2_SQL_tool,Pdf_tool,TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():
