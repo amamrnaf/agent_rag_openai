@@ -1,11 +1,12 @@
 
 from llama_index.llms.openai import OpenAI
 from llama_index.llms.ollama import Ollama
+from llama_index.llms.replicate import Replicate
 # from llama_index.llms.anthropic import Anthropic
 from llama_index.core import Settings
 import os
 import openai
-# from langchain.embeddings.huggingface import HuggingFaceBgeEmbeddings
+from langchain.embeddings.huggingface import HuggingFaceBgeEmbeddings
 from llama_index.core import Settings
 # import logging
 # import sys
@@ -16,8 +17,10 @@ from llama_index.core import Settings
 
 # from IPython.display import Markdown, display
 
+import llama_index.core
 
-# Settings.embed_model = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-base-en-v1.5")
+llama_index.core.set_global_handler("simple")
+Settings.embed_model = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-base-en-v1.5")
 
 os.environ['COHERE_API_KEY'] = 'tz56cKLq6j4PdFKXEW9K9XGOF4spOnCHHENAaY8W'
 os.environ["OPENAI_API_KEY"] = "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"
@@ -30,8 +33,14 @@ os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
 # tokenizer = Anthropic().tokenizer
 # Settings.tokenizer = tokenizer
 
+# llm = Replicate(
+#     model="a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5",
+#     temperature=0.9,
+#     max_new_tokens=8000,
+# )
+
 # llm = Anthropic(model="claude-3-opus-20240229")
 
 llm = OpenAI(temperature=0.1,model="gpt-4")
 
-# llm = Ollama(model="llama2:70b", request_timeout=1000.0)
+# llm = Ollama(model="llama2", request_timeout=1000.0)

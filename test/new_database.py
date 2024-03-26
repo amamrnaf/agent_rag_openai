@@ -237,110 +237,110 @@ with engine.connect() as connection:
     try:
         # Begin a transaction
         trans = connection.begin()
-        # connection.execute(importers_info.delete())
+        connection.execute(importers_info.delete())
 
-        # # Delete rows from exporters_info table
-        # connection.execute(exporters_info.delete())
+        # Delete rows from exporters_info table
+        connection.execute(exporters_info.delete())
         
-        # # Delete rows from clients_info table
-        # connection.execute(clients_info.delete())
+        # Delete rows from clients_info table
+        connection.execute(clients_info.delete())
 
-        # # Delete rows from fournisseurs_info table
-        # connection.execute(fournisseurs_info.delete())
+        # Delete rows from fournisseurs_info table
+        connection.execute(fournisseurs_info.delete())
         
-        # # Delete rows from document_required_info table
-        # connection.execute(document_required_info.delete())
+        # Delete rows from document_required_info table
+        connection.execute(document_required_info.delete())
         
-        # # Delete rows from annual_import_info table
-        # connection.execute(annual_import_info.delete())
+        # Delete rows from annual_import_info table
+        connection.execute(annual_import_info.delete())
         
-        # # Delete rows from annual_export_info table
-        # connection.execute(annual_export_info.delete())
+        # Delete rows from annual_export_info table
+        connection.execute(annual_export_info.delete())
         
-        # # Delete rows from accord_convention_info table
-        # connection.execute(accord_convention_info.delete())
-        # trans.commit()
+        # Delete rows from accord_convention_info table
+        connection.execute(accord_convention_info.delete())
+        trans.commit()
 
-        # # Begin another transaction
-        # trans = connection.begin()
+        # Begin another transaction
+        trans = connection.begin()
 
-        # result_importers_info = connection.execute(stmt_importers_info)
-        # for row in result_importers_info.fetchall():
-        #     query = text("INSERT INTO importers_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
+        result_importers_info = connection.execute(stmt_importers_info)
+        for row in result_importers_info.fetchall():
+            query = text("INSERT INTO importers_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
         
-        # # Commit the transaction
-        # trans.commit()
+        # Commit the transaction
+        trans.commit()
 
-        # # Begin another transaction
-        # trans = connection.begin()
+        # Begin another transaction
+        trans = connection.begin()
 
-        # # Insert rows into exporters_info table
-        # result_exporters_info = connection.execute(stmt_exporters_info)
-        # for row in result_exporters_info.fetchall():
-        #     query = text("INSERT INTO exporters_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
-        # trans.commit()
-        # trans = connection.begin()
+        # Insert rows into exporters_info table
+        result_exporters_info = connection.execute(stmt_exporters_info)
+        for row in result_exporters_info.fetchall():
+            query = text("INSERT INTO exporters_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
+        trans.commit()
+        trans = connection.begin()
 
-        # result_clients = connection.execute(stmt_clients)
-        # for row in result_clients.fetchall():
-        #     query = text("INSERT INTO clients_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
+        result_clients = connection.execute(stmt_clients)
+        for row in result_clients.fetchall():
+            query = text("INSERT INTO clients_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
     
-        # # Insert rows into fournisseurs_info table
-        # result_fournisseurs = connection.execute(stmt_fournisseurs)
-        # for row in result_fournisseurs.fetchall():
-        #     query = text("INSERT INTO fournisseurs_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
+        # Insert rows into fournisseurs_info table
+        result_fournisseurs = connection.execute(stmt_fournisseurs)
+        for row in result_fournisseurs.fetchall():
+            query = text("INSERT INTO fournisseurs_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
-        # # Insert rows into document_required_info table
-        # result_document_required = connection.execute(stmt_document_required)
-        # for row in result_document_required.fetchall():
-        #     query = text("INSERT INTO document_required_info (document_number, document_name, libelle_d_extrait, issuer, code, designation, category) VALUES (:document_number, :document_name, :libelle_d_extrait, :issuer, :code, :designation, :category)")
-        #     connection.execute(query, {"document_number": row[0], "document_name": row[1], "libelle_d_extrait": row[2], "issuer": row[3], "code": row[4], "designation": row[5], "category": row[6]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
+        # Insert rows into document_required_info table
+        result_document_required = connection.execute(stmt_document_required)
+        for row in result_document_required.fetchall():
+            query = text("INSERT INTO document_required_info (document_number, document_name, libelle_d_extrait, issuer, code, designation, category) VALUES (:document_number, :document_name, :libelle_d_extrait, :issuer, :code, :designation, :category)")
+            connection.execute(query, {"document_number": row[0], "document_name": row[1], "libelle_d_extrait": row[2], "issuer": row[3], "code": row[4], "designation": row[5], "category": row[6]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
-        # # Insert rows into annual_import_info table
-        # result_annual_import = connection.execute(stmt_annual_import)
-        # for row in result_annual_import.fetchall():
-        #     query = text("INSERT INTO annual_import_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
-        #     connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
+        # Insert rows into annual_import_info table
+        result_annual_import = connection.execute(stmt_annual_import)
+        for row in result_annual_import.fetchall():
+            query = text("INSERT INTO annual_import_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
+            connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
-        # # Insert rows into annual_export_info table
-        # result_annual_export = connection.execute(stmt_annual_export)
-        # for row in result_annual_export.fetchall():
-        #     query = text("INSERT INTO annual_export_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
-        #     connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
+        # Insert rows into annual_export_info table
+        result_annual_export = connection.execute(stmt_annual_export)
+        for row in result_annual_export.fetchall():
+            query = text("INSERT INTO annual_export_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
+            connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
         # Insert rows into accord_convention_info table
-        # result_accord_convention = connection.execute(stmt_accord_convention)
-        # for row in result_accord_convention.fetchall():
-        #     query = text("INSERT INTO accord_convention_info (country, agreement, di_percentage, tpi_percentage, code, designation, category) VALUES (:country, :agreement, :di_percentage, :tpi_percentage, :code, :designation, :category)")
-        #     connection.execute(query, {"country": row[0], "agreement": row[1], "di_percentage": row[2], "tpi_percentage": row[3], "code": row[4], "designation": row[5], "category": row[6]})
-        # trans.commit()
-        # trans = connection.begin()
+        result_accord_convention = connection.execute(stmt_accord_convention)
+        for row in result_accord_convention.fetchall():
+            query = text("INSERT INTO accord_convention_info (country, agreement, di_percentage, tpi_percentage, code, designation, category) VALUES (:country, :agreement, :di_percentage, :tpi_percentage, :code, :designation, :category)")
+            connection.execute(query, {"country": row[0], "agreement": row[1], "di_percentage": row[2], "tpi_percentage": row[3], "code": row[4], "designation": row[5], "category": row[6]})
+        trans.commit()
+        trans = connection.begin()
 
-        # result_import_duty = connection.execute(stmt_import_duty)
-        # for row in result_import_duty.fetchall():
-        #     query = text("INSERT INTO import_duty_info (DI, TPI, TVA, code, designation, category) VALUES (:DI, :TPI, :TVA, :code, :designation, :category)")
-        #     connection.execute(query, {"DI": row[0],"TPI": row[1],"TVA": row[2],"code": row[3],"designation": row[4],"category": row[5]})
-        # # Commit the transaction
+        result_import_duty = connection.execute(stmt_import_duty)
+        for row in result_import_duty.fetchall():
+            query = text("INSERT INTO import_duty_info (DI, TPI, TVA, code, designation, category) VALUES (:DI, :TPI, :TVA, :code, :designation, :category)")
+            connection.execute(query, {"DI": row[0],"TPI": row[1],"TVA": row[2],"code": row[3],"designation": row[4],"category": row[5]})
+        # Commit the transaction
         trans.commit()
     
     except Exception as e:
