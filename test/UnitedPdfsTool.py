@@ -1,3 +1,4 @@
+# Vectorindex version
 import os.path
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import (VectorStoreIndex, SimpleDirectoryReader, StorageContext, load_index_from_storage)
@@ -9,20 +10,17 @@ from llama_index.postprocessor.cohere_rerank import CohereRerank
 from llama_index.core.response_synthesizers import TreeSummarize
 from llm import llm
 from llama_index.core.tools import FunctionTool
+from llama_index.embeddings.openai import OpenAIEmbedding
+import llama_index.core
 
+llama_index.core.set_global_handler("simple")
 def initialize_index():
     """Initialize or load the index."""
-    PERSIST_DIR = "./storageDAG"
+    PERSIST_DIR = "./storageDAGPDF"
     if not os.path.exists(PERSIST_DIR):
-        documents = SimpleDirectoryReader("./content").load_data()
+        documents = SimpleDirectoryReader("./ProcessedPDFs").load_data()
         Settings.context_window = 4096
         Settings.num_output = 256
-        llm =  OpenAI(
-            temperature=0.2,
-            model="gpt-3.5-turbo",
-            context_window=Settings.context_window,
-            num_output=Settings.num_output
-        )
         index = VectorStoreIndex.from_documents(documents, transformations=[SentenceSplitter(chunk_size=512, chunk_overlap=20)], llm=llm)
         index.storage_context.persist(persist_dir=PERSIST_DIR)
     else:
@@ -47,14 +45,14 @@ def initialize_query_pipeline():
                 "---------------------\n"
                 "{context_str}\n"
                 "---------------------\n"
-          "Given the provided documents and context information below, "
+                "Given the provided documents and context information below, "
                 "answer the question: {query_str}\n"
             ),
         ),
     ]
-    text_qa_template = ChatPromptTemplate(chat_text_qa_msgs)
 
-    retriever = index.as_retriever(similarity_top_k=3)
+    text_qa_template = ChatPromptTemplate(chat_text_qa_msgs)
+    retriever = index.as_retriever(similarity_top_k=5)
     reranker = CohereRerank()
     summarizer = TreeSummarize(llm=llm)
 
@@ -79,16 +77,10 @@ def initialize_query_pipeline():
 index = initialize_index()
 query_pipeline = initialize_query_pipeline()
 
-def process_question(user_question: str) -> str:
+def Pdf_toolVectorIndex(user_question: str) -> str:
     """Process a user question and return the response."""
-    context_str = "The document delineates regulations concerning chapter 29 for HS codificationsthat starts with 29."
+    context_str = "These documents detail the classification and specifications of diverse products, encompassing a range of items from chemicals to industrial goods, for tariff and regulatory purposes."
     response = query_pipeline.run(query_str=user_question, context_str=context_str)
     return response
 
-# # Example usage:
-# user_question = input("Please input your question: ")
-# response = process_question(user_question)
-# print(response)
-
-
-Pdf_tool = FunctionTool.from_defaults(fn=process_question,description= "Useful for searching for regulations concerning chapters 27(COMBUSTIBLES MINERAUX, HUILES MINERALES ET PRODUITS DE LEUR DISTILLATION; MATIERES BITUMINEUSES; CIRES MINERALES),28(PRODUITS DES INDUSTRIES CHIMIQUES OU DES INDUSTRIES CONNEXES),29(PRODUITS CHIMIQUES ORGANIQUES).")
+Pdf_toolVector = FunctionTool.from_defaults(fn=Pdf_toolVectorIndex,description= "This tool provides access to a comprehensive set of documents outlining the classification and specifications of various products, including chemicals and industrial goods, for tariff and regulatory purposes. The content is embedded and stored in a vector store, enabling efficient retrieval and processing of user queries.")
