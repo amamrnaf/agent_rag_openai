@@ -4,7 +4,9 @@ from llm import llm
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
 from query_decomposition import generate_queries_decomposition
-from pdf_query import Pdf_tool
+from UnitedPdfsTool import Pdf_toolVector
+from seperatedPdfsTool import query_engine_tools
+from TICTool import TIC_tool
 # from pdf_query import Pdf_tool
 app = Flask(__name__)
 
@@ -21,7 +23,7 @@ def NL_2_SQL_fn(input):
 
 NL_2_SQL_tool = FunctionTool.from_defaults(fn=NL_2_SQL_fn, description="useful for querying the customs database with natural language,you can decompose what you wanna learn from the database and ask a question at a time.DO NOT use a sql command,the database is in french")
 
-agent = ReActAgent.from_tools([NL_2_SQL_tool,query_decomposition_tool,Pdf_tool], llm=llm, verbose=True)
+agent = ReActAgent.from_tools([NL_2_SQL_tool,query_decomposition_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():
