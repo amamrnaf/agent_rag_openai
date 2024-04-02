@@ -4,7 +4,7 @@ from llm import llm
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
 from query_decomposition import generate_queries_decomposition
-from UnitedPdfsTool import Pdf_toolVector
+from unitedPdfsTool import Pdf_toolVector
 from seperatedPdfsTool import query_engine_tools
 from TICTool import TIC_tool
 # from pdf_query import Pdf_tool
