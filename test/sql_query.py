@@ -38,14 +38,6 @@ table_schema_objs = [
     context_str="This table stores information about exporters, including their names,code,the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique exporter, linked to a specific codification entry through the 'codification_id' foreign key."
 )),
 (SQLTableSchema(
-    table_name="document_required_info",
-    context_str="This table contains information about required documents, including document numbers, names, libelle d'extrait, issuers,code,  the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique document requirement, linked to a specific codification entry through the 'codification_id' foreign key."
-)),
-(SQLTableSchema(
-    table_name="import_duty_info",
-    context_str="This table records information about import duties, including Duty Import (DI), Taxe Provisoire d'Importation (TPI), Taxe sur la Valeur Ajoutée (TVA), the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique set of import duty details, linked to a specific codification entry through the 'codification_id' foreign key."
-)),
-(SQLTableSchema(
     table_name="annual_import_info",
     context_str="This table contains information about annual imports, including the year, weight in kilogram, value in dirham,code,  the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique set of import data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key."
 )),
