@@ -7,19 +7,30 @@ from query_decomposition import generate_queries_decomposition
 from unitedPdfsTool import Pdf_toolVector
 from seperatedPdfsTool import query_engine_tools
 from TICTool import TIC_tool
-# from pdf_query import Pdf_tool
+from doc_required_tool import Docs_Required
+from Taxes_tool import Import_duties
+from sql_query import NL_2_SQL_fn
+
 app = Flask(__name__)
 
-
-def NL_2_SQL_fn(input):
-    response = qp.run(query=input)
-    return response
 
 NL_2_SQL_tool = FunctionTool.from_defaults(
     fn=NL_2_SQL_fn,
     description="useful for querying a database of doaune numbers(imports,exports,...) with natural language,the tool queries one table at a time so you may have to split your inqueries,DO NOT use a sql command"
 )
-agent = ReActAgent.from_tools([NL_2_SQL_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
+
+Docs_Required_tool = FunctionTool.from_defaults(
+    fn=Docs_Required,
+    description="useful for querying a database of required decuments for importing a specific product with natural language,the tool queries one table that are associated to a hs code or a name,DO NOT use a sql command"
+)
+
+taxes_tool = FunctionTool.from_defaults(
+    fn=Import_duties,
+    description="useful for querying a database for DI,TVA and TPI of specific product with natural language,the tool queries one table that are associated to a HS code or a name,DO NOT use a sql command"
+)
+
+
+agent = ReActAgent.from_tools([NL_2_SQL_tool,taxes_tool,Docs_Required_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():
