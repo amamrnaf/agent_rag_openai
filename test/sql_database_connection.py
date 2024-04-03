@@ -4,7 +4,7 @@ from llama_index.core import SQLDatabase
 
 # Assuming you already have an SQLAlchemy engine (e.g., from your Flask app)
 # Replace 'your_database_connection_string' with your actual connection string
-database_connection_string = 'mysql://root:@192.168.2.134/Adildb'
+database_connection_string = 'mysql://aiuser:topnegoce@192.168.2.134/Adildb'
 engine = create_engine(database_connection_string)
 
 # Create a MetaData object

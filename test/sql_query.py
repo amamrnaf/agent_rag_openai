@@ -12,7 +12,7 @@ from llama_index.core.query_pipeline import FnComponent
 from llama_index.core.llms import ChatResponse 
 from llama_index.core.retrievers import SQLRetriever
 from typing import List
-from llm import llm
+from llm import llm,llm_sql
 from llama_index.core.query_pipeline import (
     QueryPipeline as QP,
     InputComponent,
@@ -24,44 +24,36 @@ from llama_index.core.query_pipeline import (
 table_node_mapping = SQLTableNodeMapping(sql_database)
 table_schema_objs = [
 (SQLTableSchema(
-        table_name="codification",
-        context_str="This table stores information about douane position tarifaire with their respective codes, names, and categories.Note that the first two digits in the code represent the chapter number. For example, a code like 9005900000 belongs to chapter 90."
+    table_name="codification",
+    context_str="This table stores information about douane position tarifaire with their respective codes, names,categories and the douane chapter.Note that the first two digits in the code represent the chapter number. For example, a code like 9005900000 belongs to chapter 90."
 )),
 (SQLTableSchema(
-        table_name="importers_info",
-        context_str="This table contains information about importers, including their names,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique importer."
+    table_name="importers_info",
+    context_str="This table contains information about importers, including their names,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique importer."
 )),
 (SQLTableSchema(
     table_name="exporters_info",
-    context_str="This table stores information about exporters, including their names,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique exporter."
-)),
-(SQLTableSchema(
-    table_name="document_required_info",
-    context_str="This table contains information about required documents, including document numbers, names, libelle d'extrait, issuers,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique document requirement."
-)),
-(SQLTableSchema(
-    table_name="import_duty_info",
-    context_str="This table records information about import duties, including Duty Import (DI), Taxe Provisoire d'Importation (TPI), Taxe sur la Valeur Ajoutée (TVA),the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique set of import duty details."
+    context_str="This table stores information about exporters, including their names,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique exporter."
 )),
 (SQLTableSchema(
     table_name="annual_import_info",
-    context_str="This table contains information about annual imports, including the year, weight in kg, value in dh,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique set of import data for a specific year."
+    context_str="This table contains information about annual imports, including the year, weight in kg, value in dh,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique set of import data for a specific year."
 )),
 (SQLTableSchema(
     table_name="annual_export_info",
-    context_str="This table contains information about annual exports, including the year, weight in kg, value in dh,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique set of export data for a specific year."
+    context_str="This table contains information about annual exports, including the year, weight in kg, value in dh,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique set of export data for a specific year."
 )),
 (SQLTableSchema(
     table_name="clients_info",
-    context_str="This table stores information about clients, including the country, value in dh, weight in kg,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique client record"
+    context_str="This table stores information about clients, including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique client record"
 )),
 (SQLTableSchema(
     table_name="fournisseurs_info",
-    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg,the corresponding HS customs position codes, associated product names, and categories.Each entry represents a unique supplier record."
+    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter.Each entry represents a unique supplier record."
 )),
 (SQLTableSchema(
     table_name="accord_convention_info",
-    context_str="This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage,the corresponding HS customs position codes, associated product names, and categories. Each entry represents a unique record for an accord or convention."
+    context_str="This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique record for an accord or convention."
 )),
 ]  # add a SQLTableSchema for each table
 
@@ -114,7 +106,7 @@ sql_parser_component = FnComponent(fn=parse_response_to_sql)
 
 text2sql_prompt_template = """Given an input question, first create a syntactically correct {dialect} query to run. Then, examine the results of the query and return the answer. Order the results by a relevant column to provide the most interesting examples from the database.
 
-Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns .
+Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns, DO NOT USE escaping backlashes.
 
 Follow the format below, with each element on a separate line:
 
@@ -135,7 +127,7 @@ text2sql_prompt = templatee.partial_format(
     dialect=engine.dialect.name
 )
 response_synthesis_prompt_str = (
-    "Given an input question, synthesize a response from the query results without any limitations. Ensure that the full set of relevant information is included in your answer.\n"
+    "Given an input question, synthesize a response from the query results.\n"
     "Query: {query_str}\n"
     "SQL: {sql_query}\n"
     "SQL Response: {context_str}\n"
@@ -152,7 +144,7 @@ qp = QP(
         "table_retriever": obj_retriever,
         "table_output_parser": table_parser_component,
         "text2sql_prompt": text2sql_prompt,
-        "text2sql_llm": llm,
+        "text2sql_llm": llm_sql,
         "sql_output_parser": sql_parser_component,
         "sql_retriever": sql_retriever,
         "response_synthesis_prompt": response_synthesis_prompt,
