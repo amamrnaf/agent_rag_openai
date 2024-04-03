@@ -66,7 +66,7 @@ obj_index = ObjectIndex.from_objects(
 obj_retriever = obj_index.as_retriever(similarity_top_k=3)
 
 query_engine = SQLTableRetrieverQueryEngine(
-    sql_database, obj_index.as_retriever(similarity_top_k=1)
+    sql_database, obj_index.as_retriever(similarity_top_k=1),llm=llm
 )
 
 sql_retriever = SQLRetriever(sql_database)

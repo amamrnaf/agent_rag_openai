@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
-from sql_query import qp
 from llm import llm
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
-from query_decomposition import generate_queries_decomposition
 from unitedPdfsTool import Pdf_toolVector
 from seperatedPdfsTool import query_engine_tools
 from TICTool import TIC_tool

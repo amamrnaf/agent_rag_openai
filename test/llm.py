@@ -26,7 +26,7 @@ llama_index.core.set_global_handler("simple")
 Settings.embed_model = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-base-en-v1.5")
 
 os.environ['COHERE_API_KEY'] = 'tz56cKLq6j4PdFKXEW9K9XGOF4spOnCHHENAaY8W'
-os.environ["OPENAI_API_KEY"] = "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"
+# os.environ["OPENAI_API_KEY"] = "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"
 # os.environ["OPENAI_API_KEY"] = "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"
 os.environ["ANTHROPIC_API_KEY"] = "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"
 

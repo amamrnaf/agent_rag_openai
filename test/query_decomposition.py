@@ -1,7 +1,6 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
-from llama_index.core.agent import ReActAgent
 
 # Decomposition
 template = """You are a helpful assistant that generates multiple sub-questions related to an input question for a douane. \n
