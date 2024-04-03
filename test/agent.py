@@ -21,8 +21,10 @@ def NL_2_SQL_fn(input):
     response = qp.run(query=input)
     return response
 
-NL_2_SQL_tool = FunctionTool.from_defaults(fn=NL_2_SQL_fn, description="useful for querying the customs database with natural language,you can decompose what you wanna learn from the database and ask a question at a time.DO NOT use a sql command,the database is in french")
-
+NL_2_SQL_tool = FunctionTool.from_defaults(
+    fn=NL_2_SQL_fn,
+    description="useful for querying a database of doaune numbers(imports,exports,...) with natural language,the tool queries one table at a time so you may have to split your inqueries,DO NOT use a sql command"
+)
 agent = ReActAgent.from_tools([NL_2_SQL_tool,query_decomposition_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
