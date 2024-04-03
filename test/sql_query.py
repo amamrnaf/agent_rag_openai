@@ -7,55 +7,53 @@ from llama_index.core.objects import (
     SQLTableSchema,
 )
 from llama_index.core import VectorStoreIndex,PromptTemplate
-from sql_database_connection import sql_database,engine
+from sql_database_connection import sql_database, engine
 from llama_index.core.query_pipeline import FnComponent
 from llama_index.core.llms import ChatResponse 
 from llama_index.core.retrievers import SQLRetriever
 from typing import List
-from llm import llm
+from llm import llm,llm_sql
 from llama_index.core.query_pipeline import (
     QueryPipeline as QP,
     InputComponent,
 )
-import llama_index.core
 
-llama_index.core.set_global_handler("simple")
 
 
 # set Logging to DEBUG for more detailed outputs
 table_node_mapping = SQLTableNodeMapping(sql_database)
 table_schema_objs = [
 (SQLTableSchema(
-        table_name="codification",
-        context_str="This table contains information about douane HS code, designation and category. Each entry represents a unique douane HS code associated with a specific douane position, providing details about the corresponding name and category,the user will query about data that concerns a specific entry here,all tables concerns a row from this table."
+    table_name="codification",
+    context_str="This table stores information about douane position tarifaire with their respective codes, names,categories and the douane chapter.Note that the first two digits in the code represent the chapter number. For example, a code like 9005900000 belongs to chapter 90."
 )),
 (SQLTableSchema(
-        table_name="importers_info",
-        context_str="This table contains information about importers,including the importer's name ,the corresponding douane HS code ('code') and it's designation and category including their names and the unique codification entry they are associated with."
+    table_name="importers_info",
+    context_str="This table contains information about importers, including their names,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique importer."
 )),
 (SQLTableSchema(
     table_name="exporters_info",
-    context_str="This table stores information about exporters, including their names,code,the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique exporter, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table stores information about exporters, including their names,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique exporter."
 )),
 (SQLTableSchema(
     table_name="annual_import_info",
-    context_str="This table contains information about annual imports, including the year, weight in kilogram, value in dirham,code,  the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique set of import data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table contains information about annual imports, including the year, weight in kg, value in dh,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique set of import data for a specific year."
 )),
 (SQLTableSchema(
     table_name="annual_export_info",
-    context_str="This table contains information about annual exports, including the year, weight in kilogram, value in dirham,code,  the corresponding douane HS code ('code') and it's designation and category. Each entry represents a unique set of export data for a specific year, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table contains information about annual exports, including the year, weight in kg, value in dh,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique set of export data for a specific year."
 )),
 (SQLTableSchema(
     table_name="clients_info",
-    context_str="This table stores information about clients, including the country, weight in kilogram, value in dirham,code, the corresponding douane position tarifaire code ('code') and it's designation and category. Each entry represents a unique client record, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table stores information about clients, including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique client record"
 )),
 (SQLTableSchema(
     table_name="fournisseurs_info",
-    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dirham, weight in kilogram, the corresponding douane position tarifaire code ('code') and it's designation and category. Each entry represents a unique supplier record, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter.Each entry represents a unique supplier record."
 )),
 (SQLTableSchema(
     table_name="accord_convention_info",
-    context_str="This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage,code,  the corresponding douane position tarifaire code ('code') and it's designation and category, and the unique codification entry they are associated with. Each entry represents a unique record for an accord or convention, linked to a specific codification entry through the 'codification_id' foreign key."
+    context_str="This table stores information about accords and conventions, including the country, agreement details, DI percentage, TPI percentage,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique record for an accord or convention."
 )),
 ]  # add a SQLTableSchema for each table
 
@@ -110,7 +108,7 @@ text2sql_prompt_template = """Given an input question, first create a syntactica
 
 Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns.
 
-Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns.
+Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns, DO NOT USE escaping backlashes.
 
 Follow the format below, with each element on a separate line:
 
@@ -131,7 +129,7 @@ text2sql_prompt = templatee.partial_format(
     dialect=engine.dialect.name
 )
 response_synthesis_prompt_str = (
-    "Given an input question, synthesize a response from the query results without any limitations. Ensure that the full set of relevant information is included in your answer.\n"
+    "Given an input question, synthesize a response from the query results.\n"
     "Query: {query_str}\n"
     "SQL: {sql_query}\n"
     "SQL Response: {context_str}\n"
@@ -148,7 +146,7 @@ qp = QP(
         "table_retriever": obj_retriever,
         "table_output_parser": table_parser_component,
         "text2sql_prompt": text2sql_prompt,
-        "text2sql_llm": llm,
+        "text2sql_llm": llm_sql,
         "sql_output_parser": sql_parser_component,
         "sql_retriever": sql_retriever,
         "response_synthesis_prompt": response_synthesis_prompt,
@@ -173,6 +171,8 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-
+def NL_2_SQL_fn(input):
+    response = qp.run(query=input)
+    return response
 
 

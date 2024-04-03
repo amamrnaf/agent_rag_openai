@@ -141,7 +141,7 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-def Docs_Required(input):
+def Import_duties(input):
     response = qp.run(query=input)
     return response
 

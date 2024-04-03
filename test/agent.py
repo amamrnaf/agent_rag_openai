@@ -10,12 +10,6 @@ from TICTool import TIC_tool
 # from pdf_query import Pdf_tool
 app = Flask(__name__)
 
-def query_decomp_fn(question):
-    questions = generate_queries_decomposition.invoke({"question":question})
-    return questions
-
-query_decomposition_tool = FunctionTool.from_defaults(fn=query_decomp_fn, description="A valuable tool for breaking down the input question into sub-questions. Consider using this tool as a preliminary step before employing other tools to enhance the quality and variety of results.")
-
 
 def NL_2_SQL_fn(input):
     response = qp.run(query=input)
@@ -25,7 +19,7 @@ NL_2_SQL_tool = FunctionTool.from_defaults(
     fn=NL_2_SQL_fn,
     description="useful for querying a database of doaune numbers(imports,exports,...) with natural language,the tool queries one table at a time so you may have to split your inqueries,DO NOT use a sql command"
 )
-agent = ReActAgent.from_tools([NL_2_SQL_tool,query_decomposition_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
+agent = ReActAgent.from_tools([NL_2_SQL_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():
