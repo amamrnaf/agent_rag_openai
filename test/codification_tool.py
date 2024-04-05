@@ -24,8 +24,8 @@ from llama_index.core.query_pipeline import (
 table_node_mapping = SQLTableNodeMapping(sql_database)
 table_schema_objs = [
 (SQLTableSchema(
-    table_name="document_required_info",
-    context_str="This table contains information about required documents, including document numbers, names, libelle d'extrait, issuers,the corresponding HS customs position codes, associated product names, and categoriesand the douane chapter. Each entry represents a unique document requirement."
+    table_name="codification",
+    context_str="This table stores information about douane position tarifaire with their respective codes, names,categories and the douane chapter.Note that the first two digits in the code represent the chapter number. For example, a code like 9005900000 belongs to chapter 90."
 ))
 ]  # add a SQLTableSchema for each table
 
@@ -78,9 +78,15 @@ sql_parser_component = FnComponent(fn=parse_response_to_sql)
 
 text2sql_prompt_template = """Given an input question, first create a syntactically correct {dialect} query to run. Then, examine the results of the query and return the answer. Order the results by a relevant column to provide the most interesting examples from the database.
 
-Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. 
+Only request a few relevant columns based on the question.Ensure the use of column names present in the schema description, and do not query for non-existent columns. 
 
-Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns, DO NOT USE escaping backlashes.
+Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary, DO NOT USE escaping backlashes.
+
+here is an example of arow from the table to understand the columns :
++----+------------+--------------------------------------+--------------------------+-------------------------------+----------------+
+| id | code       | name                                 | category                 | chapter_title                 | chapter_number |
++----+------------+--------------------------------------+--------------------------+-------------------------------+----------------+
+|  1 | 2901100000 | Saturés                              | Hydrocarbures acycliques | Produits chimiques organiques |             29 |
 
 Follow the format below, with each element on a separate line:
 
@@ -143,7 +149,7 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-def Docs_Required(input):
+def position_tarifaire(input):
     response = qp.run(query=input)
     return response
 

@@ -194,7 +194,7 @@ def create_tools_for_chapters(chapter_numbers, chapter_names_list):
             metadata=ToolMetadata(
                 name=f"Chapitre_{chapter_num}",
                 description=(
-                    f"Moroccan customs's chapter {chapter_num}:{chapter_name}"
+                    f"clarifications et des exclusions pour les articles inclus dans chapitre{chapter_num}:{chapter_name}"
                 ),
             ),
         )

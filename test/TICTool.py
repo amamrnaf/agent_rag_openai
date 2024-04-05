@@ -81,4 +81,4 @@ def process_questionTIC(user_question: str) -> str:
     response = query_pipeline.run(query_str=input, context_str=context_str)
     return response
 
-TIC_tool = FunctionTool.from_defaults(fn=process_questionTIC, description= "The document details moroccan tax rates, exemptions, and regulations for a wige range of products providing a framework for their production, circulation, and control.")
+TIC_tool = FunctionTool.from_defaults(fn=process_questionTIC, description= "The document details moroccan TIC(Taxes intérieures de consommation applicables aux produits énergétiques et aux bitumes) tax.")

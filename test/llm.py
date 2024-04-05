@@ -11,15 +11,6 @@ from llama_index.llms.huggingface import (
 from typing import List, Optional
 from langchain.embeddings.huggingface import HuggingFaceBgeEmbeddings
 from llama_index.core import Settings
-# import logging
-# import sys
-
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
-
-
-# from IPython.display import Markdown, display
-
 import llama_index.core
 
 llama_index.core.set_global_handler("simple")
@@ -34,12 +25,17 @@ HF_TOKEN: Optional[str] = os.getenv("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")
 # tokenizer = Anthropic().tokenizer
 # Settings.tokenizer = tokenizer
 
-llm_sql = HuggingFaceInferenceAPI(
-    model_name="MaziyarPanahi/sqlcoder-7b-Mistral-7B-Instruct-v0.2-slerp-GGUF"
-)
+# llm = HuggingFaceInferenceAPI(
+#     model_name="CohereForAI/c4ai-command-r-plus"
+# )
+
+# llm_sql = HuggingFaceInferenceAPI(
+#     model_name="CohereForAI/c4ai-command-r-plus"
+# )
 # llm = Anthropic(model="claude-3-opus-20240229")
 
 # llm = OpenAI(temperature=0.1,model="gpt-4")
 
 llm = Ollama(model="mixtral",base_url="http://192.168.2.201:11434" ,request_timeout=300.0)
+# llm_sql = Ollama(model="sqlcoder",base_url="http://192.168.2.201:11434" ,request_timeout=300.0)
 

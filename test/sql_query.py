@@ -12,7 +12,7 @@ from llama_index.core.query_pipeline import FnComponent
 from llama_index.core.llms import ChatResponse 
 from llama_index.core.retrievers import SQLRetriever
 from typing import List
-from llm import llm,llm_sql
+from llm import llm,llm
 from llama_index.core.query_pipeline import (
     QueryPipeline as QP,
     InputComponent,
@@ -23,10 +23,6 @@ from llama_index.core.query_pipeline import (
 # set Logging to DEBUG for more detailed outputs
 table_node_mapping = SQLTableNodeMapping(sql_database)
 table_schema_objs = [
-(SQLTableSchema(
-    table_name="codification",
-    context_str="This table stores information about douane position tarifaire with their respective codes, names,categories and the douane chapter.Note that the first two digits in the code represent the chapter number. For example, a code like 9005900000 belongs to chapter 90."
-)),
 (SQLTableSchema(
     table_name="importers_info",
     context_str="This table contains information about importers, including their names,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique importer."
@@ -146,7 +142,7 @@ qp = QP(
         "table_retriever": obj_retriever,
         "table_output_parser": table_parser_component,
         "text2sql_prompt": text2sql_prompt,
-        "text2sql_llm": llm_sql,
+        "text2sql_llm": llm,
         "sql_output_parser": sql_parser_component,
         "sql_retriever": sql_retriever,
         "response_synthesis_prompt": response_synthesis_prompt,

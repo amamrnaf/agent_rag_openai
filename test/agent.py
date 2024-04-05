@@ -8,6 +8,7 @@ from TICTool import TIC_tool
 from doc_required_tool import Docs_Required
 from Taxes_tool import Import_duties
 from sql_query import NL_2_SQL_fn
+from codification_tool import position_tarifaire
 
 app = Flask(__name__)
 
@@ -27,8 +28,12 @@ taxes_tool = FunctionTool.from_defaults(
     description="useful for querying a database for DI,TVA and TPI of specific product with natural language,the tool queries one table that are associated to a HS code or a name,DO NOT use a sql command"
 )
 
+position_tarifaire_tool = FunctionTool.from_defaults(
+    fn=position_tarifaire,
+    description="useful for querying a table in a database for HS codification,corresponding name,category and the chapter it belongs to,DO NOT use a sql command"
+)
 
-agent = ReActAgent.from_tools([NL_2_SQL_tool,taxes_tool,Docs_Required_tool,Pdf_toolVector, *query_engine_tools, TIC_tool], llm=llm, verbose=True)
+agent = ReActAgent.from_tools([NL_2_SQL_tool,taxes_tool,Docs_Required_tool,position_tarifaire_tool,Pdf_toolVector,TIC_tool], llm=llm, verbose=True)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():
