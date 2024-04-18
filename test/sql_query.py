@@ -33,19 +33,19 @@ table_schema_objs = [
 )),
 (SQLTableSchema(
     table_name="annual_import_info",
-    context_str="This table contains information about annual imports, including the year, weight in kg, value in dh,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique set of import data for a specific year."
+    context_str="This table contains information about annual imports, including the year, weight in kilogram, value in dh,the HS code, associated product names, and categoriesand the douane chapter. Each entry represents a unique set of import data for a specific year."
 )),
 (SQLTableSchema(
     table_name="annual_export_info",
-    context_str="This table contains information about annual exports, including the year, weight in kg, value in dh,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique set of export data for a specific year."
+    context_str="This table contains information about annual exports, including the year, weight in kilogram, value in dh,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique set of export data for a specific year."
 )),
 (SQLTableSchema(
     table_name="clients_info",
-    context_str="This table stores information about clients, including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique client record"
+    context_str="This table stores information about clients, including the country, value in dh, weight in kilogram,the HS code, associated product names, and categories and the douane chapter. Each entry represents a unique client record"
 )),
 (SQLTableSchema(
     table_name="fournisseurs_info",
-    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kg,the HS code, associated product names, and categories and the douane chapter.Each entry represents a unique supplier record."
+    context_str="This table stores information about fournisseurs (suppliers), including the country, value in dh, weight in kilogram,the HS code, associated product names, and categories and the douane chapter.Each entry represents a unique supplier record."
 )),
 (SQLTableSchema(
     table_name="accord_convention_info",
@@ -104,7 +104,7 @@ text2sql_prompt_template = """Given an input question, first create a syntactica
 
 Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns.
 
-Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns, DO NOT USE escaping backlashes.
+Use the 'CAST' function to treat strings as numbers for numerical columns.DO NOT USE escaping backlashes before underscore to avoid errors like "Statement \"SELECT ii.name\\nFROM importers\\\\_info ii\\nWHERE ii.code = '2903410000';\" is invalid SQL.".
 
 Follow the format below, with each element on a separate line:
 
@@ -124,6 +124,8 @@ templatee= PromptTemplate(text2sql_prompt_template)
 text2sql_prompt = templatee.partial_format(
     dialect=engine.dialect.name
 )
+
+Correction_prompt_template = """Given an input in form an sql query, correct the error"""
 response_synthesis_prompt_str = (
     "Given an input question, synthesize a response from the query results.\n"
     "Query: {query_str}\n"
@@ -148,7 +150,7 @@ qp = QP(
         "response_synthesis_prompt": response_synthesis_prompt,
         "response_synthesis_llm": llm,
     },
-    verbose=True,
+    verbose=False,
 )
 
 qp.add_chain(["input", "table_retriever", "table_output_parser"])
@@ -167,7 +169,7 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-def NL_2_SQL_fn(input):
+def NL2SQLfn(input: str) -> str:
     response = qp.run(query=input)
     return response
 

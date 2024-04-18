@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, String, text
+from sqlalchemy import create_engine, MetaData, Table, Column, String, text, Integer
 
 # Define the database connection
-engine = create_engine('mysql://root:@192.168.2.134/Adildb')
+engine = create_engine('mysql://root:@localhost/Adildb')
 
 # Create a metadata object
 metadata = MetaData()
@@ -11,7 +11,9 @@ importers_info_columns = [
     Column('name', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the importers_info table schema
@@ -26,7 +28,9 @@ exporters_info_columns = [
     Column('name', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the exporters_info table schema
@@ -37,10 +41,14 @@ exporters_info = Table(
 )
 # Define the columns for clients_info table
 clients_info_columns = [
-    Column('name', String(255)),
+    Column('country', String(255)),
+    Column('value', String(255)),
+    Column('weight', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the clients_info table schema
@@ -50,15 +58,17 @@ clients_info = Table(
     *clients_info_columns
 )
 
-# Define the columns for fournisseurs_info table
 fournisseurs_info_columns = [
-    Column('name', String(255)),
+    Column('country', String(255)),
+    Column('value', String(255)),
+    Column('weight', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
-# Define the fournisseurs_info table schema
 fournisseurs_info = Table(
     'fournisseurs_info',
     metadata,
@@ -72,7 +82,9 @@ document_required_info_columns = [
     Column('issuer', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the documents_required_info table schema
@@ -88,7 +100,9 @@ annual_import_info_columns = [
     Column('value', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the annual_import_info table schema
@@ -105,7 +119,9 @@ annual_export_info_columns = [
     Column('value', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the annual_export_info table schema
@@ -123,7 +139,9 @@ accord_convention_info_columns = [
     Column('tpi_percentage', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the accord_convention_info table schema
@@ -139,7 +157,9 @@ import_duty_info_columns = [
     Column('TVA', String(255)),
     Column('code', String(10)),
     Column('designation', String(1000)),
-    Column('category', String(1000))
+    Column('category', String(1000)),
+    Column('chapter_number',Integer),
+    Column('chapter_title',String(255))
 ]
 
 # Define the import_duty_info table schema
@@ -151,10 +171,10 @@ import_duty_info = Table(
 
 metadata.create_all(engine)
 
-# Construct the SELECT statement for importers_info table
 stmt_importers_info = text("""
     SELECT importers.name AS name, importers.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number 
     FROM importers
     JOIN codification ON importers.code = codification.code
 """)
@@ -162,7 +182,8 @@ stmt_importers_info = text("""
 # Construct the SELECT statement for exporters_info table
 stmt_exporters_info = text("""
     SELECT exporters.name AS name, exporters.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM exporters
     JOIN codification ON exporters.code = codification.code
 """)
@@ -170,7 +191,8 @@ stmt_exporters_info = text("""
 stmt_clients = text("""
     SELECT clients.country AS country, clients.value AS value,
            clients.weight AS weight, clients.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM clients
     JOIN codification ON clients.code = codification.code
 """)
@@ -178,7 +200,8 @@ stmt_clients = text("""
 stmt_fournisseurs = text("""
     SELECT fournisseurs.country AS country, fournisseurs.value AS value,
            fournisseurs.weight AS weight, fournisseurs.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM fournisseurs
     JOIN codification ON fournisseurs.code = codification.code
 """)
@@ -189,7 +212,8 @@ stmt_document_required = text("""
            document_required.libelle_d_extrait AS libelle_d_extrait,
            document_required.issuer AS issuer,
            document_required.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM document_required
     JOIN codification ON document_required.code = codification.code
 """)
@@ -197,7 +221,8 @@ stmt_document_required = text("""
 stmt_annual_import = text("""
     SELECT annual_import.year AS year, annual_import.weight AS weight,
            annual_import.value AS value, annual_import.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM annual_import
     JOIN codification ON annual_import.code = codification.code
 """)
@@ -205,7 +230,8 @@ stmt_annual_import = text("""
 stmt_annual_export = text("""
     SELECT annual_export.year AS year, annual_export.weight AS weight,
            annual_export.value AS value, annual_export.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM annual_export
     JOIN codification ON annual_export.code = codification.code
 """)
@@ -216,7 +242,8 @@ stmt_accord_convention = text("""
            accord_convention.di_percentage AS di_percentage,
            accord_convention.tpi_percentage AS tpi_percentage,
            accord_convention.code AS code,
-           codification.name AS designation, codification.category AS category
+           codification.name AS designation, codification.category AS category,
+           codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM accord_convention
     JOIN codification ON accord_convention.code = codification.code
 """)
@@ -227,122 +254,124 @@ stmt_import_duty =text("""
        import_duty.TVA AS TVA,
        import_duty.code AS code,
        codification.name AS designation,
-       codification.category AS category
+       codification.category AS category,
+       codification.chapter_title as chapter_title,codification.chapter_number as chapter_number
     FROM import_duty
     JOIN codification ON import_duty.code = codification.code;
 """)
 # Connect to the database
 with engine.connect() as connection:
-
+    print("connected")
     try:
         # Begin a transaction
+        print("started")
         trans = connection.begin()
-        # connection.execute(importers_info.delete())
+        connection.execute(importers_info.delete())
 
-        # # Delete rows from exporters_info table
-        # connection.execute(exporters_info.delete())
+        # Delete rows from exporters_info table
+        connection.execute(exporters_info.delete())
         
-        # # Delete rows from clients_info table
-        # connection.execute(clients_info.delete())
+        # Delete rows from clients_info table
+        connection.execute(clients_info.delete())
 
-        # # Delete rows from fournisseurs_info table
-        # connection.execute(fournisseurs_info.delete())
+        # Delete rows from fournisseurs_info table
+        connection.execute(fournisseurs_info.delete())
         
-        # # Delete rows from document_required_info table
-        # connection.execute(document_required_info.delete())
+        # Delete rows from document_required_info table
+        connection.execute(document_required_info.delete())
         
-        # # Delete rows from annual_import_info table
-        # connection.execute(annual_import_info.delete())
+        # Delete rows from annual_import_info table
+        connection.execute(annual_import_info.delete())
         
-        # # Delete rows from annual_export_info table
-        # connection.execute(annual_export_info.delete())
+        # Delete rows from annual_export_info table
+        connection.execute(annual_export_info.delete())
         
-        # # Delete rows from accord_convention_info table
-        # connection.execute(accord_convention_info.delete())
-        # trans.commit()
+        # Delete rows from accord_convention_info table
+        connection.execute(accord_convention_info.delete())
+        trans.commit()
+        print("deleted")
+        # Begin another transaction
+        trans = connection.begin()
 
-        # # Begin another transaction
-        # trans = connection.begin()
+        result_importers_info = connection.execute(stmt_importers_info)
+        for row in result_importers_info.fetchall():
+            query = text("INSERT INTO importers_info (name, code, designation, category,chapter_title,chapter_number) VALUES (:name, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3],"chapter_title":row[4],"chapter_number":row[5]})
+        print("d 1")
+        # Commit the transaction
+        trans.commit()
 
-        # result_importers_info = connection.execute(stmt_importers_info)
-        # for row in result_importers_info.fetchall():
-        #     query = text("INSERT INTO importers_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
-        
-        # # Commit the transaction
-        # trans.commit()
+        # Begin another transaction
+        trans = connection.begin()
 
-        # # Begin another transaction
-        # trans = connection.begin()
+        # Insert rows into exporters_info table
+        result_exporters_info = connection.execute(stmt_exporters_info)
+        for row in result_exporters_info.fetchall():
+            query = text("INSERT INTO exporters_info (name, code, designation, category,chapter_title,chapter_number) VALUES (:name, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3],"chapter_title":row[4],"chapter_number":row[5]})
+        trans.commit()
+        trans = connection.begin()
+        print("d 2")
+        result_clients = connection.execute(stmt_clients)
+        for row in result_clients.fetchall():
+            query = text("INSERT INTO clients_info (country,value,weight, code, designation, category,chapter_title,chapter_number) VALUES (:country,:value,:weight, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"country": row[0], "value": row[1], "weight": row[2], "code": row[3],"designation":row[4],"category":row[5],"chapter_title":row[6],"chapter_number":row[7]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
-        # # Insert rows into exporters_info table
-        # result_exporters_info = connection.execute(stmt_exporters_info)
-        # for row in result_exporters_info.fetchall():
-        #     query = text("INSERT INTO exporters_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[2], "category": row[3]})
-        # trans.commit()
-        # trans = connection.begin()
+        print("d 3")
+        # Insert rows into fournisseurs_info table
+        result_fournisseurs = connection.execute(stmt_fournisseurs)
+        for row in result_fournisseurs.fetchall():
+            query = text("INSERT INTO fournisseurs_info (country,value,weight,code, designation, category,chapter_title,chapter_number) VALUES (:country,:value,:weight,:code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"country": row[0], "value": row[1], "weight": row[2], "code": row[3],"designation":row[4],"category":row[5],"chapter_title":row[6],"chapter_number":row[7]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
 
-        # result_clients = connection.execute(stmt_clients)
-        # for row in result_clients.fetchall():
-        #     query = text("INSERT INTO clients_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
-
-    
-        # # Insert rows into fournisseurs_info table
-        # result_fournisseurs = connection.execute(stmt_fournisseurs)
-        # for row in result_fournisseurs.fetchall():
-        #     query = text("INSERT INTO fournisseurs_info (name, code, designation, category) VALUES (:name, :code, :designation, :category)")
-        #     connection.execute(query, {"name": row[0], "code": row[1], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
-
-        # # Insert rows into document_required_info table
-        # result_document_required = connection.execute(stmt_document_required)
-        # for row in result_document_required.fetchall():
-        #     query = text("INSERT INTO document_required_info (document_number, document_name, libelle_d_extrait, issuer, code, designation, category) VALUES (:document_number, :document_name, :libelle_d_extrait, :issuer, :code, :designation, :category)")
-        #     connection.execute(query, {"document_number": row[0], "document_name": row[1], "libelle_d_extrait": row[2], "issuer": row[3], "code": row[4], "designation": row[5], "category": row[6]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
-
-        # # Insert rows into annual_import_info table
-        # result_annual_import = connection.execute(stmt_annual_import)
-        # for row in result_annual_import.fetchall():
-        #     query = text("INSERT INTO annual_import_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
-        #     connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
-
-        # # Insert rows into annual_export_info table
-        # result_annual_export = connection.execute(stmt_annual_export)
-        # for row in result_annual_export.fetchall():
-        #     query = text("INSERT INTO annual_export_info (year, weight, value, code, designation, category) VALUES (:year, :weight, :value, :code, :designation, :category)")
-        #     connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5]})
-        #  # Commit the transaction
-        # trans.commit()
-        # trans = connection.begin()
-
+        # Insert rows into document_required_info table
+        result_document_required = connection.execute(stmt_document_required)
+        for row in result_document_required.fetchall():
+            query = text("INSERT INTO document_required_info (document_number, document_name, libelle_d_extrait, issuer, code, designation, category,chapter_title,chapter_number) VALUES (:document_number, :document_name, :libelle_d_extrait, :issuer, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"document_number": row[0], "document_name": row[1], "libelle_d_extrait": row[2], "issuer": row[3], "code": row[4], "designation": row[5], "category": row[6],"chapter_title":row[7],"chapter_number":row[8]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
+        print("d 4")
+        # Insert rows into annual_import_info table
+        result_annual_import = connection.execute(stmt_annual_import)
+        for row in result_annual_import.fetchall():
+            query = text("INSERT INTO annual_import_info (year, weight, value, code, designation, category,chapter_title,chapter_number) VALUES (:year, :weight, :value, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5],"chapter_title":row[6],"chapter_number":row[7]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
+        print("d 5")
+        # Insert rows into annual_export_info table
+        result_annual_export = connection.execute(stmt_annual_export)
+        for row in result_annual_export.fetchall():
+            query = text("INSERT INTO annual_export_info (year, weight, value, code, designation, category,chapter_title,chapter_number) VALUES (:year, :weight, :value, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"year": row[0], "weight": row[1], "value": row[2], "code": row[3], "designation": row[4], "category": row[5],"chapter_title":row[6],"chapter_number":row[7]})
+         # Commit the transaction
+        trans.commit()
+        trans = connection.begin()
+        print("d 6")
         # Insert rows into accord_convention_info table
-        # result_accord_convention = connection.execute(stmt_accord_convention)
-        # for row in result_accord_convention.fetchall():
-        #     query = text("INSERT INTO accord_convention_info (country, agreement, di_percentage, tpi_percentage, code, designation, category) VALUES (:country, :agreement, :di_percentage, :tpi_percentage, :code, :designation, :category)")
-        #     connection.execute(query, {"country": row[0], "agreement": row[1], "di_percentage": row[2], "tpi_percentage": row[3], "code": row[4], "designation": row[5], "category": row[6]})
-        # trans.commit()
-        # trans = connection.begin()
-
-        # result_import_duty = connection.execute(stmt_import_duty)
-        # for row in result_import_duty.fetchall():
-        #     query = text("INSERT INTO import_duty_info (DI, TPI, TVA, code, designation, category) VALUES (:DI, :TPI, :TVA, :code, :designation, :category)")
-        #     connection.execute(query, {"DI": row[0],"TPI": row[1],"TVA": row[2],"code": row[3],"designation": row[4],"category": row[5]})
-        # # Commit the transaction
-        # trans.commit()
-    
+        result_accord_convention = connection.execute(stmt_accord_convention)
+        for row in result_accord_convention.fetchall():
+            query = text("INSERT INTO accord_convention_info (country, agreement, di_percentage, tpi_percentage, code, designation, category,chapter_title,chapter_number) VALUES (:country, :agreement, :di_percentage, :tpi_percentage, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"country": row[0], "agreement": row[1], "di_percentage": row[2], "tpi_percentage": row[3], "code": row[4], "designation": row[5], "category": row[6],"chapter_title":row[7],"chapter_number":row[8]})
+        trans.commit()
+        trans = connection.begin()
+        print("d 7")
+        result_import_duty = connection.execute(stmt_import_duty)
+        for row in result_import_duty.fetchall():
+            query = text("INSERT INTO import_duty_info (DI, TPI, TVA, code, designation, category,chapter_title,chapter_number) VALUES (:DI, :TPI, :TVA, :code, :designation, :category,:chapter_title,:chapter_number)")
+            connection.execute(query, {"DI": row[0],"TPI": row[1],"TVA": row[2],"code": row[3],"designation": row[4],"category": row[5],"chapter_title":row[6],"chapter_number":row[7]})
+        # Commit the transaction
+        trans.commit()
+        print("created")
     except Exception as e:
         # Rollback the transaction in case of error
         trans.rollback()

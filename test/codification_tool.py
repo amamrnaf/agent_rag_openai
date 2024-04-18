@@ -17,6 +17,9 @@ from llama_index.core.query_pipeline import (
     QueryPipeline as QP,
     InputComponent,
 )
+import llama_index.core
+
+llama_index.core.set_global_handler("simple")
 
 
 
@@ -80,13 +83,7 @@ text2sql_prompt_template = """Given an input question, first create a syntactica
 
 Only request a few relevant columns based on the question.Ensure the use of column names present in the schema description, and do not query for non-existent columns. 
 
-Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary, DO NOT USE escaping backlashes.
-
-here is an example of arow from the table to understand the columns :
-+----+------------+--------------------------------------+--------------------------+-------------------------------+----------------+
-| id | code       | name                                 | category                 | chapter_title                 | chapter_number |
-+----+------------+--------------------------------------+--------------------------+-------------------------------+----------------+
-|  1 | 2901100000 | Saturés                              | Hydrocarbures acycliques | Produits chimiques organiques |             29 |
+DO NOT USE escaping backlashes before underscore to avoid errors like "Statement \"SELECT ii.name\\nFROM importers\\\\_info ii\\nWHERE ii.code = '2903410000';\" is invalid SQL.".
 
 Follow the format below, with each element on a separate line:
 
@@ -130,7 +127,7 @@ qp = QP(
         "response_synthesis_prompt": response_synthesis_prompt,
         "response_synthesis_llm": llm,
     },
-    verbose=True,
+    verbose=False,
 )
 
 qp.add_chain(["input", "table_retriever", "table_output_parser"])
@@ -149,7 +146,7 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-def position_tarifaire(input):
+def PositionTarifaire(input: str) -> str:
     response = qp.run(query=input)
     return response
 

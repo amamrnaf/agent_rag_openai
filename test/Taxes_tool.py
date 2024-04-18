@@ -80,7 +80,9 @@ text2sql_prompt_template = """Given an input question, first create a syntactica
 
 Avoid querying for all columns from a specific table; only request a few relevant columns based on the question. Ensure the use of column names present in the schema description, and do not query for non-existent columns. 
 
-Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns, DO NOT USE escaping backlashes.
+Pay attention to the placement of columns in their respective tables, and qualify column names with the table name when necessary. Use the 'CAST' function to treat strings as numbers for numerical columns.
+
+DO NOT USE escaping backlashes before underscore to avoid errors like "Statement \"SELECT ii.name\\nFROM importers\\\\_info ii\\nWHERE ii.code = '2903410000';\" is invalid SQL.".
 
 Follow the format below, with each element on a separate line:
 
@@ -143,7 +145,7 @@ qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
 qp.add_link("response_synthesis_prompt", "response_synthesis_llm")  
 
 
-def Import_duties(input):
+def ImportDuties(input: str) -> str:
     response = qp.run(query=input)
     return response
 
