@@ -2,38 +2,48 @@ from flask import Flask, request, jsonify
 from llm import llm
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
-from unitedPdfsTool import Pdf_toolVector
-from seperatedPdfsTool import query_engine_tools
-from TICTool import TIC_tool
 from doc_required_tool import DocsRequired
 from Taxes_tool import ImportDuties
 from sql_query import NL2SQLfn
 from codification_tool import PositionTarifaire
-
+from prompt import new_tmpl
+from code_douane_tool import coude_douane_tool
 app = Flask(__name__)
 
 
 NL2SQLtool = FunctionTool.from_defaults(
     fn=NL2SQLfn,
-    description="useful for asking an engine of trade data (imports,suppliers,...) with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY,the tool queries one table at a time so you may have to split your inqueries"
+    description="useful for questionning with natural language about a database importers/exporters,suppliers/clients,yearly imports/exports,the database is in FRENCH"
 )
 
 DocsRequiredtool = FunctionTool.from_defaults(
     fn=DocsRequired,
-    description="useful for asking an engine of required decuments for importing a specific product with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY,the tool queries one table that are associated to a hs code or a name"
+    description="useful for asking an engine of required decuments for importing a specific product with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY"
 )
 
-taxestool = FunctionTool.from_defaults(
+taxesTool = FunctionTool.from_defaults(
     fn=ImportDuties,
-    description="useful for asking an engine for datas on DI,TVA and TPI of specific product with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY,the tool queries one table that are associated to a HS code or a name"
+    description="useful for asking an engine for datas on DI,TVA and TPI of specific product with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY"
 )
 
 positiontarifairetool = FunctionTool.from_defaults(
     fn=PositionTarifaire,
-    description="useful for asking an engine of datas on HS(poistion tarifaire) codification,name,category and the chapter it belongs to with NATURAL LANGUAGE IN FRENCH,DO NOT USE A SQL QUERY."
+    description="useful for questionning with natural language about a database on HS(poistion tarifaire) codification,name,category and the chapter it belongs to."
 )
 
-agent = ReActAgent.from_tools([NL2SQLtool,taxestool,DocsRequiredtool,positiontarifairetool,Pdf_toolVector,TIC_tool], llm=llm, verbose=True)
+douane_tool = FunctionTool.from_defaults(
+    fn=coude_douane_tool,
+    description="useful for searching through morrocan dahirs and law on customs and regulations."
+)
+
+agent = ReActAgent.from_tools(
+        tools=[NL2SQLtool,taxesTool,DocsRequiredtool,positiontarifairetool], 
+        llm=llm, 
+        verbose=True,
+        )
+agent.update_prompts(
+    {"agent_worker:system_prompt": new_tmpl}
+)
  
 @app.route('/query', methods=['POST'])
 def query_endpoint():

@@ -1,7 +1,6 @@
 import os.path
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import (VectorStoreIndex, SimpleDirectoryReader, StorageContext, load_index_from_storage)
-from llama_index.llms.openai import OpenAI
 from llama_index.core import Settings,ChatPromptTemplate
 from llama_index.core.llms import ChatMessage, MessageRole
 from llama_index.core.query_pipeline import QueryPipeline
@@ -9,7 +8,6 @@ from llama_index.postprocessor.cohere_rerank import CohereRerank
 from llama_index.core.response_synthesizers import TreeSummarize
 from llm import llm
 from llama_index.core.tools import FunctionTool
-from llama_index.embeddings.openai import OpenAIEmbedding
 
 def initialize_index():
     """Initialize or load the index."""

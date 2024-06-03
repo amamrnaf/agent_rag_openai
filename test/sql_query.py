@@ -12,7 +12,7 @@ from llama_index.core.query_pipeline import FnComponent
 from llama_index.core.llms import ChatResponse 
 from llama_index.core.retrievers import SQLRetriever
 from typing import List
-from llm import llm,llm
+from llm import llm,llm_sql
 from llama_index.core.query_pipeline import (
     QueryPipeline as QP,
     InputComponent,
@@ -144,7 +144,7 @@ qp = QP(
         "table_retriever": obj_retriever,
         "table_output_parser": table_parser_component,
         "text2sql_prompt": text2sql_prompt,
-        "text2sql_llm": llm,
+        "text2sql_llm": llm_sql,
         "sql_output_parser": sql_parser_component,
         "sql_retriever": sql_retriever,
         "response_synthesis_prompt": response_synthesis_prompt,
