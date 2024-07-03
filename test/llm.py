@@ -16,14 +16,12 @@ from llama_parse import LlamaParse  #
 llama_index.core.set_global_handler("simple")
 Settings.embed_model = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-base-en-v1.5")
 
-HF_TOKEN: Optional[str] = os.getenv("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")
-os.environ['COHERE_API_KEY'] = 'tz56cKLq6j4PdFKXEW9K9XGOF4spOnCHHENAaY8W'
-# os.environ["OPENAI_API_KEY"] = "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"
-# os.environ["OPENAI_API_KEY"] = "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"
-# os.environ["OPENAI_API_KEY"] = "sk-proj-xgT0lVCW5w14KqQ5hde9T3BlbkFJb4gl5GZZO0MOEzzv8kXA"
+HF_TOKEN: Optional[str] = os.getenv("")
+os.environ['COHERE_API_KEY'] = ''
+
 
 parser = LlamaParse(
-    api_key="llx-szNf94dIOrNKPkZQV0TzHWdUJQzU7XYciavl2H7iHmz9FN9W",  # can also be set in your env as LLAMA_CLOUD_API_KEY
+    api_key="",  # can also be set in your env as LLAMA_CLOUD_API_KEY
     result_type="markdown"  # "markdown" and "text" are available
 )
 
